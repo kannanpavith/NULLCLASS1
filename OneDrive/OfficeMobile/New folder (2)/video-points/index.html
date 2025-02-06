@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Download Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Add some basic styling to make the page look decent */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Toggle button styles */
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-button {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+        }
+
+        .toggle-button:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+
+        .toggle input:checked + .toggle-button {
+            background-color: #2196F3;
+        }
+
+        .toggle input:checked + .toggle-button:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Welcome to Video Platform</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="upgrade.html">Upgrade</a></li>
+                    <li><a href="#">contact</a></li>
+                </ul>
+            </nav>
+            <label class="toggle">
+                <input type="checkbox" id="theme-toggle">
+                <span class="toggle-button"></span>
+            </label>
+        </div>
+    </header>
+
+    <main id="app">
+        <div class="container">
+            <h2>Watch Videos</h2>
+            <div id="video-section" class="video-container">
+                <!-- Video 1 -->
+                <div class="video-card" onclick="watchVideo(1)">
+                    <video class="video-thumbnail" controls>
+                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p>Watch Video 1</p>
+                </div>
+
+                <!-- Video 2 -->
+                <div class="video-card" onclick="watchVideo(2)">
+                    <video class="video-thumbnail" controls>
+                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p>Watch Video 2</p>
+                </div>
+            </div>
+
+            <button onclick="handleDownload();">Download Video</button>
+
+            <div id="video-info" class="video-info">
+                <p>Videos downloaded today: <span id="downloaded-videos">0</span></p>
+                <p>Your total points: <span id="points">0</span></p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Video Platform. Powered by YourCompany</p>
+        </div>
+    </footer>
+
+    <script>
+        let downloadsToday = 0;
+        let totalPoints = 0;
+        const dailyDownloadLimit = 1; // Set daily download limit
+        let upgradePrompted = false;
+        const videoPoints = [5, 10]; // Points for each video
+
+        // Check if a theme is saved in localStorage and apply it
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Theme toggle functionality
+        const themeToggleButton = document.getElementById('theme-toggle');
+        themeToggleButton.addEventListener('change', toggleTheme);
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme); // Save theme to localStorage
+        }
+
+        function handleDownload() {
+            if (downloadsToday < dailyDownloadLimit) {
+                downloadsToday += 1;
+                document.getElementById('downloaded-videos').textContent = downloadsToday;
+                alert("Video downloaded!");
+            } else {
+                alert("You have reached your download limit. Upgrade to Premium for unlimited downloads!");
+                setTimeout(function() {
+                    window.location.href = 'upgrade.html'; // Redirect to upgrade page after alert
+                }, 100);
+            }
+        }
+
+        function watchVideo(videoId) {
+            alert(`Watching video ${videoId}...`);
+            totalPoints += videoPoints[videoId - 1]; // Update points
+            document.getElementById('points').textContent = totalPoints; // Update points display
+        }
+    </script>
+</body>
+</html>

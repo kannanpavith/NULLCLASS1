@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login Page</h1>
+    <form id="loginForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Enter email" required><br><br>
+
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" id="phone_number" placeholder="Enter phone number" required><br><br>
+
+        <button type="submit">Send OTP</button>
+    </form>
+
+    <form id="otpForm" style="display:none;">
+        <label for="otp">OTP:</label>
+        <input type="text" id="otp" placeholder="Enter OTP" required><br><br>
+        <button type="submit">Verify OTP</button>
+    </form>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const otpForm = document.getElementById('otpForm');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const phone_number = document.getElementById('phone_number').value;
+
+            // Simulate location (You should replace this with actual geolocation logic)
+            const userLocation = 'Tamil Nadu'; // Change based on real location or get from the backend
+
+            // Determine the OTP method (email or SMS)
+            const method = ['Tamil Nadu', 'Kerala', 'Karnataka', 'Andhra Pradesh', 'Telangana'].includes(userLocation) ? 'email' : 'sms';
+
+            // Send OTP request to server
+            const response = await fetch('http://localhost:3000/send_otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    location: userLocation,
+                    method: method,
+                    email: email,
+                    phone_number: phone_number,
+                }),
+            });
+
+            const result = await response.json();
+            if (result.message === 'OTP sent') {
+                // Show OTP form after sending OTP
+                loginForm.style.display = 'none';
+                otpForm.style.display = 'block';
+            }
+        });
+
+        otpForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const otp = document.getElementById('otp').value;
+            const email = document.getElementById('email').value;
+            const phone_number = document.getElementById('phone_number').value;
+
+            // Determine whether to use email or phone_number for OTP verification
+            const verificationField = email ? 'email' : 'phone_number';
+
+            // Send OTP verification request to the server
+            const response = await fetch('http://localhost:3000/verify_otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    [verificationField]: email || phone_number,
+                    otp: otp,
+                }),
+            });
+
+            const result = await response.json();
+            if (result.message === 'OTP verified successfully!') {
+                alert('Login successful!');
+                // Redirect or proceed with logged-in user
+                window.location.href = '/dashboard'; // Change to your actual dashboard or landing page
+            } else {
+                alert('Invalid OTP!');
+            }
+        });
+    </script>
+    <script src = "script.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script> <!-- Add Razorpay checkout script -->
+</body>
+</html>
